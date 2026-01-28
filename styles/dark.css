@@ -1,0 +1,71 @@
+:root{
+    --blue: #01b3ed;
+    --indigo: #6610f2;
+    --purple: #6f42c1;
+    --pink: #d63384;
+    --red: #ff0000;
+    --orange: #ffba00;
+    --yellow: #ffba00;
+    --green: #74b100;
+    --teal: #67981a;
+    --cyan: #0583c5;
+    --white: #fff;
+    --gray: #999999;
+    --gray-dark: #343a40;
+    --primary: #ff5a5f;
+    --secondary: #666666;
+    --success: #67981a;
+    --info: #3f93f3;
+    --warning: #ffba00;
+    --danger: #ff0000;
+    --light: #f0f0f0;
+    --dark: #000;
+    --white: #fff;
+    --gray: #999999;
+    --darker-light: #cccccc;
+    --dark-red: #cc0000;
+    --lighter-dark: #262626;
+    --green: #74b100;
+    --gray-01: #e8edef;
+    --gray-02: #f5f5f5;
+    --gray-03: #eeeeee;
+    --gray-04: #eef1f2;
+    --gray-05: #ecf0f1;
+    --gray-06: #f0f2f3;
+    --breakpoint-xs: 0;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+    --font-family-sans-serif: "Work Sans", sans-serif;
+    --font-family-monospace: "Work Sans", sans-serif
+}
+
+/* Use this to override existing css from global.css or to create a new custom one for dark theme  */
+.home-main-intro.dark {
+    background-image: none;
+    background-color: var(--dark);
+}
+
+.home-main-intro.dark::after {
+    background: none;
+}
+
+.home-main-intro.dark h1, h2, h3, h4, h5, h6 {
+    color: var(--white);
+}
+
+.home-main-intro p {
+    color: var(--secondary);
+}
+.home-main-intro.dark p {
+    color: var(--white);
+}
+
+.category-slider.dark {
+    background-color: var(--dark);
+}
+
+.category-slider.dark h1, h2, h3, h4, h5, h6, i {
+    color: var(--white);
+}

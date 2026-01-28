@@ -1,0 +1,18 @@
+export const ASSETS = {
+    noImage: "/images/no-image.jpg",
+    logo: "/images/white-logo.png",
+    bgWhiteHexagon: "/images/bg-white-pattern.jpg",
+    bgLocation: "/images/bg-location.svg",
+    bgMap: "/images/bg-map.svg",
+    bgMarker: "/images/bg-marker.svg",
+    bgTeamDetail: "/images/bg-team-detail.svg",
+    bgTeamInfo: "/images/bg-team-info.svg",
+    bgTeamAdd: "/images/bg-team-add.svg",
+    bgBuilding: "/images/bg-building.svg",
+    bgSettings1: "/images/bg-settings-1.svg",
+    bgInvestment: "/images/bg-investment.svg",
+    bgVault: "/images/bg-vault.svg",
+    bgIdentity: "/images/bg-identity.svg",
+    bgTax: "/images/bg-tax.svg",
+    bgTrade: "/images/bg-trade.svg",
+};
