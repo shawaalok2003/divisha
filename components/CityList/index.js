@@ -14,7 +14,7 @@ const CityList = (props) => {
     useEffect(() => {
         setLoader(true);
 
-        COMMON_API.searchCities({ page: "all", filters: stateId ? { stateId } : {} })
+        COMMON_API.searchCities({ page: 0, limit: 10000, filters: stateId ? { stateId } : {} })
             .then((results) => {
                 const cityResponse = results.data;
 

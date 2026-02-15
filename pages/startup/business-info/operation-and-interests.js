@@ -29,7 +29,7 @@ export default function StartupCategoriesAndServices() {
     const [paymentLoader, setPaymentLoader] = useState(false);
 
     useEffect(() => {
-        COMMON_API.searchCountries({ page: "all", filters: { ...(countrySearchTerm ? { name: countrySearchTerm } : {}) } })
+        COMMON_API.searchCountries({ page: 0, limit: 10000, filters: { ...(countrySearchTerm ? { name: countrySearchTerm } : {}) } })
             .then((results) => {
                 const startupResponse = results.data;
 

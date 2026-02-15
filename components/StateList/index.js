@@ -14,7 +14,7 @@ const StateList = (props) => {
     useEffect(() => {
         setLoader(true);
 
-        COMMON_API.searchStates({ page: "all", filters: countryId ? { countryId } : {} })
+        COMMON_API.searchStates({ page: 0, limit: 10000, filters: countryId ? { countryId } : {} })
             .then((results) => {
                 const stateResponse = results.data;
 

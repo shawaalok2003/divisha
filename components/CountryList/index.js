@@ -11,7 +11,7 @@ const CountryList = (props) => {
     const [countries, setCountries] = useState([]);
 
     useEffect(() => {
-        COMMON_API.searchCountries({ page: "all", filters: {} })
+        COMMON_API.searchCountries({ page: 0, limit: 10000, filters: {} })
             .then((results) => {
                 const countryResponse = results.data;
 

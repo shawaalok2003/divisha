@@ -41,7 +41,8 @@ const InvestorStartupAdd = (props) => {
 
             const { data: invstars } = await INVESTOR_STARTUP_PORTFOLIO_API.getStartups({
                 token: investorData.token,
-                page: "all",
+                page: 0,
+                limit: 10000,
             });
 
             const { data: nameStartups = [] } = await SEARCH_API.findStartups({

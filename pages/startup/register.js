@@ -37,7 +37,7 @@ export default function Login() {
     const handleStartupRegistration = (e) => {
         e.preventDefault();
 
-        if (!registerData.countryId.length) {
+        if (!registerData.countryId) {
             setRegisterData({ ...registerData, error: "Please select country" });
             return;
         } else if (!registerData.name.length) {
@@ -71,7 +71,7 @@ export default function Login() {
                 setLoader(false);
                 setRegisterData({ ...registerData, error: error?.response?.data?.message || "Failed To Register Startup" });
             })
-            .finally(() => {});
+            .finally(() => { });
     };
 
     const handleOTPVerification2 = (e) => {
@@ -94,7 +94,7 @@ export default function Login() {
             .catch((error) => {
                 consoleLogger("STARTUPS ERROR: ", error);
             })
-            .finally(() => {});
+            .finally(() => { });
     };
 
     const handleOTPVerification = (e) => {
@@ -126,11 +126,11 @@ export default function Login() {
                 setRegisterData({ ...registerData, otp: "", error: "Invalid or Expired OTP" });
                 setOtpLoader(false);
             })
-            .finally(() => {});
+            .finally(() => { });
     };
 
     useEffect(() => {
-        COMMON_API.searchCountries({ page: "all", filters: {} })
+        COMMON_API.searchCountries({ page: 0, limit: 10000, filters: {} })
             .then((results) => {
                 const startupResponse = results.data;
 
@@ -143,9 +143,16 @@ export default function Login() {
             .catch((error) => {
                 consoleLogger("STARTUPS ERROR: ", error);
 
-                setCountries([]);
+                setCountries([
+                    {
+                        countryId: 1,
+                        name: "India",
+                        shortName: "in",
+                        mobileCode: 91,
+                    },
+                ]);
             })
-            .finally(() => {});
+            .finally(() => { });
     }, []);
 
     return (
@@ -174,7 +181,7 @@ export default function Login() {
                                     className="form-control color-gray"
                                     value={registerData.countryId}
                                     onChange={(e) => {
-                                        setRegisterData({ ...registerData, countryId: e.target.value });
+                                        setRegisterData({ ...registerData, countryId: parseInt(e.target.value) });
                                         setSelectedCountry(countries.find((c) => c.countryId == e.target.value) || {});
                                     }}
                                 >
@@ -272,7 +279,7 @@ export default function Login() {
                                         !registerData.name.length ||
                                         !registerData.email.length ||
                                         !registerData.mobile.length ||
-                                        !registerData.countryId.length ||
+                                        !registerData.countryId ||
                                         !registerData.agreement
                                     }
                                 >

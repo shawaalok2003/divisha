@@ -50,7 +50,7 @@ export default function Listing() {
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-        CATEGORY_API.searchCategories({ token: null, page: "all" })
+        CATEGORY_API.searchCategories({ token: null, page: 0, limit: 10000 })
             .then((results) => {
                 const startupResponse = results.data;
 

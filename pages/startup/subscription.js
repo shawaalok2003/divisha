@@ -25,7 +25,7 @@ export default function StartupDashboard() {
     const [incognitoMode, setIncognitoMode] = useState(false);
 
     useEffect(() => {
-        SUBSCRIPTION_PLAN_API.searchSubscriptionPlans({ token: startup.token, page: "all" })
+        SUBSCRIPTION_PLAN_API.searchSubscriptionPlans({ token: startup.token, page: 0, limit: 10000 })
             .then((results) => {
                 const startupResponse = results.data;
 

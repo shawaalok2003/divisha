@@ -44,11 +44,11 @@ const InvestorStartupPreference = (props) => {
             setLoader(true);
 
             /* Get Countries */
-            const { data: counts } = await COUNTRY_API.getCountries({ token: investorData.token, page: "all", filters: {} });
+            const { data: counts } = await COUNTRY_API.getCountries({ token: investorData.token, page: 0, limit: 10000, filters: {} });
             if (counts?.status === "success") setCountries(formatDataForMultiSelect(counts.data));
 
             /* Get Categories */
-            const { data: cats } = await CATEGORY_API.searchCategories({ token: investorData.token, page: "all" });
+            const { data: cats } = await CATEGORY_API.searchCategories({ token: investorData.token, page: 0, limit: 10000 });
             if (cats?.status === "success") setCategories(formatDataForMultiSelect(cats.data));
 
             const { data: prefs } = await INVESTOR_PREFERENCE_API.getPreference({ token: investorData.token });

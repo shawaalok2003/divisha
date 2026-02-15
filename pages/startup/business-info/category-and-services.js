@@ -30,7 +30,7 @@ export default function StartupCategoriesAndServices() {
     const [startupServices, setStartupServices] = useState(startup?.info?.services || []);
 
     useEffect(() => {
-        CATEGORY_API.searchCategories({ token: startup.token, page: "all" })
+        CATEGORY_API.searchCategories({ token: startup.token, page: 0, limit: 10000 })
             .then((results) => {
                 const startupResponse = results.data;
 
@@ -53,7 +53,7 @@ export default function StartupCategoriesAndServices() {
     }, []);
 
     useEffect(() => {
-        SERVICE_API.searchServices({ token: startup.token, page: "all", filters: { categoryId: startupCategories } })
+        SERVICE_API.searchServices({ token: startup.token, page: 0, limit: 10000, filters: { categoryId: startupCategories } })
             .then((results) => {
                 const startupResponse = results.data;
 

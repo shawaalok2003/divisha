@@ -4,19 +4,19 @@ import { recoilPersist } from "recoil-persist";
 const { persistAtom } = recoilPersist();
 
 export const startupState = atom({
-    key: "startup",
+    key: "startupState",
     default: {},
     effects_UNSTABLE: [persistAtom],
 });
 
 export const superState = atom({
-    key: "super",
+    key: "superState",
     default: {},
     effects_UNSTABLE: [persistAtom],
 });
 
 export const investorState = atom({
-    key: "investor",
+    key: "investorState",
     default: {},
     effects_UNSTABLE: [persistAtom],
 });

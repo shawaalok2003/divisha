@@ -213,7 +213,7 @@ export default function StartupLocationInfo() {
     };
 
     useEffect(() => {
-        COMMON_API.searchCountries({ page: "all", filters: {} })
+        COMMON_API.searchCountries({ page: 0, limit: 10000, filters: {} })
             .then((results) => {
                 const startupResponse = results.data;
 
@@ -232,7 +232,7 @@ export default function StartupLocationInfo() {
     }, []);
 
     useEffect(() => {
-        COMMON_API.searchStates({ page: "all", filters: {} })
+        COMMON_API.searchStates({ page: 0, limit: 10000, filters: {} })
             .then((results) => {
                 const startupResponse = results.data;
 
@@ -251,7 +251,7 @@ export default function StartupLocationInfo() {
     }, []);
 
     useEffect(() => {
-        COMMON_API.searchCities({ page: "all", filters: {} })
+        COMMON_API.searchCities({ page: 0, limit: 10000, filters: {} })
             .then((results) => {
                 const startupResponse = results.data;
 

@@ -1,10 +1,10 @@
 import { API_URLS } from "../../constants";
 import STW_API from "../../helpers/api";
 
-const registerStartup = async ({ name, email, mobile, countryId }) => {
+const registerStartup = async (data) => {
     return STW_API.post(
         `${API_URLS.STARTUP}/register`,
-        { name, email, mobile, countryId },
+        { ...data },
         {
             headers: {},
         }
