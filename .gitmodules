@@ -1,0 +1,3 @@
+[submodule "divisha_backend"]
+	path = divisha_backend
+	url = https://github.com/shawaalok2003/divisha_backend.git
