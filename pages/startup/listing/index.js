@@ -65,7 +65,7 @@ export default function Listing() {
 
                 setCategories([]);
             })
-            .finally(() => {});
+            .finally(() => { });
     }, []);
 
     useEffect(() => {
@@ -98,7 +98,7 @@ export default function Listing() {
                 setStartupsCount(0);
                 setTotalStartupsCount(0);
             })
-            .finally(() => {});
+            .finally(() => { });
     }, [pageNo, pageSize, filters]);
 
     const redirectToStartupSearch = () => {
@@ -345,9 +345,9 @@ export default function Listing() {
                                             <Link
                                                 href={`${APPLICATION_URLS.STARTUP_LISTING.url}/${startup.startupId}`}
                                                 className="store-image"
-                                                // style={{
-                                                //     backgroundImage: startup.logo || "url('/images/no-image.jpg')",
-                                                // }}
+                                            // style={{
+                                            //     backgroundImage: startup.logo || "url('/images/no-image.jpg')",
+                                            // }}
                                             >
                                                 <img src={startup.logo || "/images/no-image.jpg"} className="w-100" onError={handleDefaultImage} />
                                             </Link>
@@ -384,20 +384,20 @@ export default function Listing() {
                                                     <div className="col-lg-6">
                                                         <i className="fal fa-briefcase text-dark"></i>
                                                         <span className="d-inline-block ml-2 text-dark">
-                                                            Stage: {startup.stage.toUpperCase() || "NA"}
+                                                            Stage: {startup.stage?.toUpperCase() || "NA"}
                                                         </span>
                                                     </div>
                                                     <div className="col-lg-6">
                                                         <i className="fal fa-sack-dollar text-dark"></i>
                                                         <span className="d-inline-block ml-2 text-dark">
-                                                            Open To Funding: {startup?.funding?.interestedInFunding.toUpperCase() || "NA"}
+                                                            Open To Funding: {startup?.funding?.interestedInFunding?.toUpperCase() || "NA"}
                                                         </span>
                                                     </div>
                                                     <div className="col-lg-6">
                                                         <i className="fal fa-clock text-dark"></i>
                                                         <span className="d-inline-block ml-2 text-dark">
-                                                            Type: {startup?.funding?.fundMode.toUpperCase() || "NA"} ({" "}
-                                                            {startup?.funding?.fundType.toUpperCase() || "NA"} )
+                                                            Type: {startup?.funding?.fundMode?.toUpperCase() || "NA"} ({" "}
+                                                            {startup?.funding?.fundType?.toUpperCase() || "NA"} )
                                                         </span>
                                                     </div>
                                                 </div>
@@ -680,9 +680,8 @@ export default function Listing() {
                                             onClick={() => setPageNo(i)}
                                         >
                                             <button
-                                                className={`page-link bg-transparent link-hover-dark-primary px-3 ${
-                                                    pageNo === i ? "text-danger" : ""
-                                                }`}
+                                                className={`page-link bg-transparent link-hover-dark-primary px-3 ${pageNo === i ? "text-danger" : ""
+                                                    }`}
                                             >
                                                 {number + 1}
                                             </button>
