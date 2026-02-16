@@ -37,7 +37,7 @@ export default function Login() {
     const handleStartupRegistration = (e) => {
         e.preventDefault();
 
-        if (!registerData.countryId) {
+        if (!registerData.countryId || registerData.countryId == 0) {
             setRegisterData({ ...registerData, error: "Please select country" });
             return;
         } else if (!registerData.name.length) {
@@ -110,6 +110,7 @@ export default function Login() {
                 if (startupResponse.status === "success") {
                     // Startup Verified Success
                     setStartupToken(startupResponse.data.token);
+                    setStartupSession(startupResponse.data.token);
 
                     setTimeout(() => {
                         setOtpLoader(false);
@@ -143,14 +144,7 @@ export default function Login() {
             .catch((error) => {
                 consoleLogger("STARTUPS ERROR: ", error);
 
-                setCountries([
-                    {
-                        countryId: 1,
-                        name: "India",
-                        shortName: "in",
-                        mobileCode: 91,
-                    },
-                ]);
+                setCountries([]);
             })
             .finally(() => { });
     }, []);
@@ -181,7 +175,7 @@ export default function Login() {
                                     className="form-control color-gray"
                                     value={registerData.countryId}
                                     onChange={(e) => {
-                                        setRegisterData({ ...registerData, countryId: parseInt(e.target.value) });
+                                        setRegisterData({ ...registerData, countryId: e.target.value });
                                         setSelectedCountry(countries.find((c) => c.countryId == e.target.value) || {});
                                     }}
                                 >
@@ -279,7 +273,7 @@ export default function Login() {
                                         !registerData.name.length ||
                                         !registerData.email.length ||
                                         !registerData.mobile.length ||
-                                        !registerData.countryId ||
+                                        (!registerData.countryId || registerData.countryId == 0) ||
                                         !registerData.agreement
                                     }
                                 >

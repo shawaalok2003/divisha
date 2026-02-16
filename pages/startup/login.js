@@ -54,7 +54,7 @@ export default function Login() {
                 consoleLogger("STARTUPS ERROR: ", error);
                 setLoginData({ ...loginData, error: error?.response?.data?.message || "Failed To Login Startup" });
             })
-            .finally(() => {});
+            .finally(() => { });
     };
 
     const handleOTPVerification = (e) => {
@@ -70,6 +70,7 @@ export default function Login() {
                 if (startupResponse.status === "success") {
                     // Startup Verified Success
                     setStartupToken(startupResponse.data.token);
+                    setStartupSession(startupResponse.data.token);
 
                     setTimeout(() => {
                         setOtpLoader(false);
@@ -86,7 +87,7 @@ export default function Login() {
                 setLoginData({ ...loginData, otp: "", error: "Invalid or Expired OTP" });
                 setOtpLoader(false);
             })
-            .finally(() => {});
+            .finally(() => { });
     };
 
     return (
