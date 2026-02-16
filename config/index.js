@@ -5,7 +5,7 @@ const CONFIG = {
     NODE_ENV: process.env["NEXT_PUBLIC_NODE_ENV"] || "development",
     LAUNCH_MODE: process.env["NEXT_PUBLIC_LAUNCH_MODE"] === "true" ? true : false,
     MAINTENANCE_MODE: process.env["NEXT_PUBLIC_MAINTENANCE_MODE"] === "true" ? true : false,
-    API_URL: process.env["NEXT_PUBLIC_API_URL"] || "",
+    API_URL: process.env["NEXT_PUBLIC_API_URL"] || "http://localhost:3333",
     AWS_SPACE_BUCKET: process.env["NEXT_PUBLIC_AWS_SPACE_BUCKET"] || "",
     AWS_SPACE_ENDPOINT: process.env["NEXT_PUBLIC_AWS_SPACE_ENDPOINT"] || "",
     AWS_SPACE_ACCESS_KEY_ID: publicRuntimeConfig.STORAGE_ACCESS_KEY || "",
