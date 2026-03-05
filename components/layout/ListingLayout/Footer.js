@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { APPLICATION_URLS } from "../../../constants";
 import { getYear } from "../../../helpers/date";
@@ -7,6 +8,11 @@ import { useRouter } from "next/router";
 
 export default function Footer() {
     const router = useRouter();
+
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const deployedYear = 2023;
     const currentYear = getYear();
@@ -173,16 +179,15 @@ export default function Footer() {
                             </div>
                             <div className="col-lg-6 mb-3 mb-lg-0">
                                 <div>
-                                    &copy; {footerYear}{" "}
+                                    &copy; {mounted ? footerYear : deployedYear}{" "}
                                     <Link
                                         href={APPLICATION_URLS.HOME.url}
-                                        className={`link-hover-dark-primary font-weight-semibold ${
-                                            isLightThemeMode(router.pathname) ? "text-dark" : "text-primary"
-                                        }`}
+                                        className={`link-hover-dark-primary font-weight-semibold ${isLightThemeMode(router.pathname) ? "text-dark" : "text-primary"
+                                            }`}
                                     >
                                         StartupzWorld,
                                     </Link>{" "}
-                                    All Rights Resevered.
+                                    All Rights Reserved.
                                 </div>
                             </div>
                             <div className="back-top text-left text-lg-right gtf-back-to-top">

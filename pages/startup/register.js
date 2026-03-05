@@ -37,7 +37,7 @@ export default function Login() {
     const handleStartupRegistration = (e) => {
         e.preventDefault();
 
-        if (!registerData.countryId || registerData.countryId == 0) {
+        if (!registerData.countryId.length) {
             setRegisterData({ ...registerData, error: "Please select country" });
             return;
         } else if (!registerData.name.length) {
@@ -71,7 +71,7 @@ export default function Login() {
                 setLoader(false);
                 setRegisterData({ ...registerData, error: error?.response?.data?.message || "Failed To Register Startup" });
             })
-            .finally(() => { });
+            .finally(() => {});
     };
 
     const handleOTPVerification2 = (e) => {
@@ -94,7 +94,7 @@ export default function Login() {
             .catch((error) => {
                 consoleLogger("STARTUPS ERROR: ", error);
             })
-            .finally(() => { });
+            .finally(() => {});
     };
 
     const handleOTPVerification = (e) => {
@@ -110,7 +110,6 @@ export default function Login() {
                 if (startupResponse.status === "success") {
                     // Startup Verified Success
                     setStartupToken(startupResponse.data.token);
-                    setStartupSession(startupResponse.data.token);
 
                     setTimeout(() => {
                         setOtpLoader(false);
@@ -127,7 +126,7 @@ export default function Login() {
                 setRegisterData({ ...registerData, otp: "", error: "Invalid or Expired OTP" });
                 setOtpLoader(false);
             })
-            .finally(() => { });
+            .finally(() => {});
     };
 
     useEffect(() => {
@@ -146,7 +145,7 @@ export default function Login() {
 
                 setCountries([]);
             })
-            .finally(() => { });
+            .finally(() => {});
     }, []);
 
     return (
@@ -273,7 +272,7 @@ export default function Login() {
                                         !registerData.name.length ||
                                         !registerData.email.length ||
                                         !registerData.mobile.length ||
-                                        (!registerData.countryId || registerData.countryId == 0) ||
+                                        !registerData.countryId.length ||
                                         !registerData.agreement
                                     }
                                 >
