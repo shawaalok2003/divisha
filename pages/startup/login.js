@@ -25,75 +25,6 @@ export default function Login() {
     const [loader, setLoader] = useState(false);
     const [otpLoader, setOtpLoader] = useState(false);
 
-    // MSG91 widget: initialize when OTP step is shown
-    useEffect(() => {
-        if (loginForm !== "otp") return;
-
-        const identifier = loginData.username;
-        const otpType = loginData.type;
-
-        const configuration = {
-            widgetId: process.env.NEXT_PUBLIC_MSG91_WIDGET_ID || "366365724645383935313330",
-            tokenAuth: process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH || "",
-            identifier: identifier,
-            exposeMethods: false,
-            success: (data) => {
-                setOtpLoader(true);
-                STARTUP_API.verifyMSG91OTP({ accessToken: data.message, type: otpType, username: identifier })
-                    .then((results) => {
-                        const res = results.data;
-                        if (res.status === "success") {
-                            setStartupToken(res.data.token);
-                            setStartupSession(res.data.token);
-                            setTimeout(() => {
-                                setOtpLoader(false);
-                                router.push(APPLICATION_URLS.STARTUP_DASHBOARD.url);
-                            }, 1500);
-                        } else {
-                            setOtpLoader(false);
-                            setLoginData((prev) => ({ ...prev, error: "OTP Verification Failed" }));
-                        }
-                    })
-                    .catch((err) => {
-                        consoleLogger("verifyMSG91OTP error:", err);
-                        setOtpLoader(false);
-                        setLoginData((prev) => ({ ...prev, error: "OTP Verification Failed" }));
-                    });
-            },
-            failure: (error) => {
-                consoleLogger("MSG91 OTP failure:", error);
-                setLoginData((prev) => ({ ...prev, error: "OTP Verification Failed" }));
-            },
-        };
-
-        if (typeof window.initSendOTP === "function") {
-            window.initSendOTP(configuration);
-            return;
-        }
-
-        const urls = [
-            "https://verify.msg91.com/otp-provider.js",
-            "https://verify.phone91.com/otp-provider.js",
-        ];
-        let i = 0;
-        function loadScript() {
-            const script = document.createElement("script");
-            script.src = urls[i];
-            script.async = true;
-            script.onload = () => {
-                if (typeof window.initSendOTP === "function") {
-                    window.initSendOTP(configuration);
-                }
-            };
-            script.onerror = () => {
-                i++;
-                if (i < urls.length) loadScript();
-            };
-            document.head.appendChild(script);
-        }
-        loadScript();
-    }, [loginForm]);
-
     const handleStartupLogin = (e) => {
         e.preventDefault();
 
@@ -226,14 +157,32 @@ export default function Login() {
                         <div className="form-login">
                             <div className="alert alert-info mb-7 show">
                                 <div className="font-size-lg py-0 mr-6 text-center">
-                                    An OTP verification popup will appear. Please complete the verification to continue.
+                                    An OTP has been sent to your registered mobile number.
                                 </div>
+                            </div>
+                            <div className="form-group mb-2">
+                                <label className="text-dark font-weight-semibold font-size-md mb-2 lh-15">
+                                    Enter OTP<span className="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Enter 6-digit OTP"
+                                    value={loginData.otp}
+                                    onChange={(e) => setLoginData({ ...loginData, otp: e.target.value })}
+                                />
                             </div>
                             {loginData && loginData.error.length > 0 && (
                                 <div className="form-group mt-4 mb-4">
                                     <h6 className="text-danger text-center">{loginData.error}</h6>
                                 </div>
                             )}
+                            <button
+                                className="btn btn-primary btn-block font-weight-bold text-uppercase font-size-lg rounded-sm mb-8 mt-5"
+                                onClick={handleOTPVerification}
+                            >
+                                Verify OTP
+                            </button>
                         </div>
                     )}
 
