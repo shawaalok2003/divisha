@@ -31,6 +31,16 @@ const verifyOTP = async ({ type, otp }) => {
     );
 };
 
+const verifyMSG91OTP = async ({ accessToken, type, username }) => {
+    return STW_API.post(
+        `${API_URLS.STARTUP}/verifymsg91otp`,
+        { accessToken, type, username },
+        {
+            headers: {},
+        }
+    );
+};
+
 const searchStartups = async ({ page = 0, limit = 0, filters = {} }) => {
     return STW_API.get(`${API_URLS.STARTUP}`, {
         headers: {},
@@ -79,6 +89,7 @@ const STARTUP_API = {
     registerStartup,
     loginStartup,
     verifyOTP,
+    verifyMSG91OTP,
     searchStartups,
     getStartupDetails,
     updateStartup,
