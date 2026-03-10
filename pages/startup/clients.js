@@ -10,7 +10,7 @@ import Pagination from "../../components/Pagination";
 import CONFIG from "../../config";
 import { deleteFileFromS3, getSignedUrl } from "../../helpers/storage";
 import useStartup from "../../hooks/useStartup";
-import StorageService from "../../services/storage";
+import UPLOAD_API from "../../api/upload";
 import Swal from "sweetalert2";
 import { consoleLogger } from "../../helpers";
 import { ASSETS } from "../../constants/assets";
@@ -37,44 +37,29 @@ export default function StartupClients() {
     const [pageSize, setPageSize] = useState(6);
     const [reload, setReload] = useState(false);
 
-    const handleClientLogoUpload = useCallback((files) => {
+    const handleClientLogoUpload = useCallback(async (files) => {
         setImageLoader(true);
 
-        //consoleLogger("FILE", files);
+        if (!files || (files && files.length === 0)) {
+            setImageLoader(false);
+            return;
+        }
 
-        if (!files || (files && files.length === 0)) return;
+        try {
+            const { data: uploadedFile } = await UPLOAD_API.uploadFileToAWS({ token: startup.token, file: files[0], type: "startuplogo" });
 
-        const filePath = `startup/${startup.startupId}/client/${files[0].name.split(".")[0]}.${files[0].name.split(".")[1]}`;
-
-        const params = {
-            Body: files[0],
-            Bucket: CONFIG.AWS_SPACE_BUCKET,
-            Key: filePath,
-        };
-
-        //consoleLogger("AWS PARAMS: ", params);
-
-        StorageService.putObject(params)
-            .on("build", (request) => {
-                request.httpRequest.headers.Host = process.env.REACT_APP_SPACE_URL;
-                request.httpRequest.headers["Content-Length"] = files[0].size;
-                request.httpRequest.headers["Content-Type"] = files[0].type;
-                request.httpRequest.headers["x-amz-acl"] = "authenticated-read";
-                request.httpRequest.headers["Access-Control-Allow-Origin"] = "*";
-            })
-            .send((err) => {
-                if (err) {
-                    setImageLoader(false);
-                    consoleLogger("error", err);
-                } //errorCallback();
-                else {
-                    setSignedClientLogo(getSignedUrl(filePath));
-
-                    setClientLogo(filePath);
-                    setImageLoader(false);
-                }
-            });
-    }, []);
+            if (uploadedFile.status === "success") {
+                setSignedClientLogo(uploadedFile.data.signedUrl);
+                setClientLogo(uploadedFile.data.Key);
+            } else {
+                consoleLogger("CLIENT LOGO UPLOAD ERROR:", uploadedFile?.message);
+            }
+        } catch (err) {
+            consoleLogger("CLIENT LOGO UPLOAD ERROR:", err);
+        } finally {
+            setImageLoader(false);
+        }
+    }, [startup?.token]);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ maxFiles: 1, onDrop: handleClientLogoUpload });
 

@@ -83,7 +83,10 @@ export default function StartupTeam() {
     const handleTeamImageUpload = useCallback(async (files) => {
         setImageLoader(true);
 
-        if (!files || (files && files.length === 0)) return;
+        if (!files || (files && files.length === 0)) {
+            setImageLoader(false);
+            return;
+        }
 
         const { data: uploadedFile } = await UPLOAD_API.uploadFileToAWS({ token: startup.token, file: files[0], type: "teammember" });
 
@@ -94,9 +97,9 @@ export default function StartupTeam() {
             setImageLoader(false);
         } else {
             setImageLoader(false);
-            consoleLogger("error", err);
+            consoleLogger("TEAM MEMBER PHOTO UPLOAD ERROR:", uploadedFile?.message || "Upload failed");
         }
-    }, []);
+    }, [startup?.token]);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ maxFiles: 1, onDrop: handleTeamImageUpload });
 

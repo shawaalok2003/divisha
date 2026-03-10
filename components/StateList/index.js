@@ -13,13 +13,26 @@ const StateList = (props) => {
 
     useEffect(() => {
         setLoader(true);
+        const normalizedCountryId = countryId ? parseInt(countryId) : 0;
 
-        COMMON_API.searchStates({ page: 0, limit: 10000, filters: countryId ? { countryId } : {} })
+        COMMON_API.searchStates({ page: 0, limit: 10000, filters: normalizedCountryId ? { countryId: normalizedCountryId } : {} })
             .then((results) => {
                 const stateResponse = results.data;
 
                 if (stateResponse.status === "success") {
-                    setStates(stateResponse.data);
+                    if (stateResponse.data.length > 0) {
+                        setStates(stateResponse.data);
+                        return;
+                    }
+
+                    if (normalizedCountryId) {
+                        return COMMON_API.searchStates({ page: 0, limit: 10000, filters: {} }).then((fallbackResult) => {
+                            const fallbackResponse = fallbackResult.data;
+                            setStates(fallbackResponse.status === "success" ? fallbackResponse.data : []);
+                        });
+                    }
+
+                    setStates([]);
                 } else {
                     setStates([]);
                 }

@@ -2,7 +2,9 @@ import { API_URLS } from "../constants";
 import STW_API from "../helpers/api";
 
 const uploadFileToAWS = async ({ token, file = null, type = null }) => {
-    if (!file && !type) return;
+    if (!file || !type || !token) {
+        throw new Error("File, upload type, and token are required");
+    }
 
     const formData = new FormData();
 

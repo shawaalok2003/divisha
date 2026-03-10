@@ -29,6 +29,12 @@ export default function StartupCategoriesAndServices() {
     const [paymentLoader, setPaymentLoader] = useState(false);
 
     useEffect(() => {
+        setInterests(startup?.info?.interests || []);
+        setOperationalCountries(startup?.info?.operationalCountries || []);
+        setPaymentMethods(startup?.info?.paymentMethods || []);
+    }, [startup?.info?.interests, startup?.info?.operationalCountries, startup?.info?.paymentMethods]);
+
+    useEffect(() => {
         COMMON_API.searchCountries({ page: 0, limit: 10000, filters: { ...(countrySearchTerm ? { name: countrySearchTerm } : {}) } })
             .then((results) => {
                 const startupResponse = results.data;
@@ -174,7 +180,7 @@ export default function StartupCategoriesAndServices() {
                                         data={STARTUP_INTERESTS.map((ints) => {
                                             return {
                                                 ...ints,
-                                                selected: startup?.info?.interests.includes(ints.value),
+                                                selected: interests.includes(ints.value),
                                             };
                                         })}
                                         onSelect={(ints) => {
@@ -268,7 +274,7 @@ export default function StartupCategoriesAndServices() {
                                         data={PAYMENT_METHODS.map((pm) => {
                                             return {
                                                 ...pm,
-                                                selected: startup?.info?.paymentMethods.includes(pm.value),
+                                                selected: paymentMethods.includes(pm.value),
                                             };
                                         })}
                                         onSelect={(pMethods) => {

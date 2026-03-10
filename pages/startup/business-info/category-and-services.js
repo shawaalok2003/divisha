@@ -9,7 +9,8 @@ import { consoleLogger } from "../../../helpers";
 
 import CATEGORY_API from "../../../api/category";
 import SERVICE_API from "../../../api/service";
-import STARTUP_API from "../../../api/startup/startup";
+import STARTUP_CATEGORY_API from "../../../api/startup/category";
+import STARTUP_SERVICE_API from "../../../api/startup/service";
 
 import useStartup from "../../../hooks/useStartup";
 import useToast from "../../../hooks/useToast";
@@ -26,10 +27,17 @@ export default function StartupCategoriesAndServices() {
     const [categoryLoader, setCategoryLoader] = useState(false);
     const [serviceLoader, setServiceLoader] = useState(false);
 
-    const [startupCategories, setStartupCategories] = useState(startup?.info?.categories || []);
-    const [startupServices, setStartupServices] = useState(startup?.info?.services || []);
+    const [startupCategories, setStartupCategories] = useState((startup?.info?.categories || []).map((id) => parseInt(id)));
+    const [startupServices, setStartupServices] = useState((startup?.info?.services || []).map((id) => parseInt(id)));
 
     useEffect(() => {
+        setStartupCategories((startup?.info?.categories || []).map((id) => parseInt(id)));
+        setStartupServices((startup?.info?.services || []).map((id) => parseInt(id)));
+    }, [startup?.info?.categories, startup?.info?.services]);
+
+    useEffect(() => {
+        if (!startup?.token) return;
+
         CATEGORY_API.searchCategories({ token: startup.token, page: 0, limit: 10000 })
             .then((results) => {
                 const startupResponse = results.data;
@@ -50,9 +58,14 @@ export default function StartupCategoriesAndServices() {
                 setCategories([]);
             })
             .finally(() => {});
-    }, []);
+    }, [startup?.token, startupCategories]);
 
     useEffect(() => {
+        if (!startup?.token || startupCategories.length === 0) {
+            setServices([]);
+            return;
+        }
+
         SERVICE_API.searchServices({ token: startup.token, page: 0, limit: 10000, filters: { categoryId: startupCategories } })
             .then((results) => {
                 const startupResponse = results.data;
@@ -81,23 +94,23 @@ export default function StartupCategoriesAndServices() {
                 setServices([]);
             })
             .finally(() => {});
-    }, [startupCategories]);
+    }, [startup?.token, startupCategories]);
 
     const handleStartupCategoriesUpdate = (e, ignoreLoader = false) => {
         e.preventDefault();
         if (!ignoreLoader) setCategoryLoader(true);
 
-        const updateFields = { ...(startupCategories ? { categories: startupCategories } : {}) };
+        const categories = startupCategories.map((categoryId) => ({ categoryId }));
 
-        STARTUP_API.updateStartupInfo({
+        STARTUP_CATEGORY_API.manageStartupCategories({
             token: startup.token,
-            updateFields,
+            categories,
         })
             .then((results) => {
                 const startupResponse = results.data;
 
                 if (startupResponse.status === "success") {
-                    setStartupDetails({ info: { ...startup?.info, ...updateFields } });
+                    setStartupDetails({ info: { ...startup?.info, categories: startupCategories } });
                     if (!ignoreLoader) setCategoryLoader(false);
                     if (!ignoreLoader) successToast("Categories updated successfully !!");
                 }
@@ -114,17 +127,28 @@ export default function StartupCategoriesAndServices() {
         setServiceLoader(true);
 
         handleStartupCategoriesUpdate(e, true);
-        const updateFields = { ...(startupServices ? { services: startupServices } : {}) };
+        const servicesPayload = startupServices
+            .map((serviceId) => {
+                const matchedService = services.find((service) => service.serviceId === serviceId);
 
-        STARTUP_API.updateStartupInfo({
+                if (!matchedService) return null;
+
+                return {
+                    categoryId: matchedService.categoryId,
+                    serviceId,
+                };
+            })
+            .filter((service) => service !== null);
+
+        STARTUP_SERVICE_API.manageStartupServices({
             token: startup.token,
-            updateFields,
+            services: servicesPayload,
         })
             .then((results) => {
                 const startupResponse = results.data;
 
                 if (startupResponse.status === "success") {
-                    setStartupDetails({ info: { ...startup?.info, ...updateFields } });
+                    setStartupDetails({ info: { ...startup?.info, services: startupServices } });
                     setServiceLoader(false);
                     successToast("Services updated successfully !!");
                 }
@@ -190,7 +214,20 @@ export default function StartupCategoriesAndServices() {
                                                     <MultiSelect
                                                         data={services.filter((s) => s.categoryId === sc.categoryId)}
                                                         onSelect={(servs) => {
-                                                            setStartupServices(servs.filter((sv) => sv.selected).map((sv) => sv.value));
+                                                            const categoryServiceIds = services
+                                                                .filter((service) => service.categoryId === sc.categoryId)
+                                                                .map((service) => service.serviceId);
+                                                            const selectedServiceIds = servs
+                                                                .filter((service) => service.selected)
+                                                                .map((service) => service.value);
+
+                                                            setStartupServices((existingServices) => {
+                                                                const otherCategoryServices = existingServices.filter(
+                                                                    (serviceId) => !categoryServiceIds.includes(serviceId)
+                                                                );
+
+                                                                return [...otherCategoryServices, ...selectedServiceIds];
+                                                            });
                                                         }}
                                                         bordered
                                                     />

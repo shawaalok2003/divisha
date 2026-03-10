@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import Popup from "reactjs-popup";
 
 import StartupLayout from "../../components/layout/StartupLayout";
-import StorageService from "../../services/storage";
 
 import { useDropzone } from "react-dropzone";
 import CONFIG from "../../config";

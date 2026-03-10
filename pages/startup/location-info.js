@@ -22,26 +22,6 @@ export default function StartupLocationInfo() {
         },
     ];
 
-    const statesData = [
-        {
-            stateId: 1,
-            countryId: 1,
-            name: "Bihar",
-            shortName: "BR",
-            mobileCode: "0612",
-        },
-    ];
-
-    const citiesData = [
-        {
-            cityId: 1,
-            stateId: 1,
-            name: "Patna",
-            shortName: "PNBE",
-            mobileCode: "0612",
-        },
-    ];
-
     const [modalStatus, setModalStatus] = useState(false);
 
     const [officeTypesData, setOfficeTypesData] = useState([
@@ -55,8 +35,8 @@ export default function StartupLocationInfo() {
         },
     ]);
     const [countries, setCountries] = useState(countriesData || []);
-    const [states, setStates] = useState(statesData || []);
-    const [cities, setCities] = useState(citiesData || []);
+    const [states, setStates] = useState([]);
+    const [cities, setCities] = useState([]);
 
     const [officeType, setOfficeType] = useState("head");
     const [officeAddress, setOfficeAddress] = useState("");
@@ -82,13 +62,49 @@ export default function StartupLocationInfo() {
     useEffect(() => {
         setOfficeState("");
         setOfficeCity("");
+        setCities([]);
 
-        //setStates(states.filter((s) => s.countryId == officeCountry));
+        if (!officeCountry) {
+            setStates([]);
+            return;
+        }
+
+        COMMON_API.searchStates({ page: 0, limit: 10000, filters: { countryId: parseInt(officeCountry) } })
+            .then((results) => {
+                const resp = results.data;
+                if (resp.status === "success" && resp.data.length > 0) {
+                    setStates(resp.data);
+                } else {
+                    // Fallback: load all states
+                    return COMMON_API.searchStates({ page: 0, limit: 10000, filters: {} }).then((fallback) => {
+                        setStates(fallback.data.status === "success" ? fallback.data.data : []);
+                    });
+                }
+            })
+            .catch(() => setStates([]));
     }, [officeCountry]);
 
-    /* Reset Office City When Office State Changes */
+    /* Reset Office City When Office State Changes & fetch cities */
     useEffect(() => {
         setOfficeCity("");
+
+        if (!officeState) {
+            setCities([]);
+            return;
+        }
+
+        COMMON_API.searchCities({ page: 0, limit: 10000, filters: { stateId: parseInt(officeState) } })
+            .then((results) => {
+                const resp = results.data;
+                if (resp.status === "success" && resp.data.length > 0) {
+                    setCities(resp.data);
+                } else {
+                    return COMMON_API.searchCities({ page: 0, limit: 10000, filters: {} }).then((fallback) => {
+                        setCities(fallback.data.status === "success" ? fallback.data.data : []);
+                    });
+                }
+            })
+            .catch(() => setCities([]));
     }, [officeState]);
 
     useEffect(() => {
@@ -227,44 +243,6 @@ export default function StartupLocationInfo() {
                 consoleLogger("STARTUPS ERROR: ", error);
 
                 setCountries([]);
-            })
-            .finally(() => {});
-    }, []);
-
-    useEffect(() => {
-        COMMON_API.searchStates({ page: 0, limit: 10000, filters: {} })
-            .then((results) => {
-                const startupResponse = results.data;
-
-                if (startupResponse.status === "success") {
-                    setStates(startupResponse.data);
-                } else {
-                    setStates([]);
-                }
-            })
-            .catch((error) => {
-                consoleLogger("STARTUPS ERROR: ", error);
-
-                setStates([]);
-            })
-            .finally(() => {});
-    }, []);
-
-    useEffect(() => {
-        COMMON_API.searchCities({ page: 0, limit: 10000, filters: {} })
-            .then((results) => {
-                const startupResponse = results.data;
-
-                if (startupResponse.status === "success") {
-                    setCities(startupResponse.data);
-                } else {
-                    setCities([]);
-                }
-            })
-            .catch((error) => {
-                consoleLogger("STARTUPS ERROR: ", error);
-
-                setCities([]);
             })
             .finally(() => {});
     }, []);
@@ -449,9 +427,7 @@ export default function StartupLocationInfo() {
                                     >
                                         <option value="">Select State</option>
                                         {states &&
-                                            states
-                                                .filter(officeCountry.length ? (s) => s.countryId == officeCountry : (s) => s)
-                                                .map((state, stateIndex) => (
+                                            states.map((state, stateIndex) => (
                                                     <option key={`stw-state-${stateIndex}`} value={state.stateId}>
                                                         {state.name || ""}
                                                     </option>
@@ -472,9 +448,7 @@ export default function StartupLocationInfo() {
                                     >
                                         <option value="">Select City</option>
                                         {cities &&
-                                            cities
-                                                .filter(officeState.length ? (ct) => ct.stateId == officeState : (ct) => ct)
-                                                .map((city, cityIndex) => (
+                                            cities.map((city, cityIndex) => (
                                                     <option key={`stw-city-${cityIndex}`} value={city.cityId}>
                                                         {city.name || ""}
                                                     </option>

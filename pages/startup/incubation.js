@@ -10,9 +10,11 @@ import moment from "moment";
 import Pagination from "../../components/Pagination";
 import Swal from "sweetalert2";
 import { consoleLogger } from "../../helpers";
+import useToast from "../../hooks/useToast";
 
 export default function StartupIncubation() {
     const { startup } = useStartup();
+    const { successToast, errorToast } = useToast();
 
     const [modalStatus, setModalStatus] = useState(false);
     const [loader, setLoader] = useState(false);
@@ -52,16 +54,16 @@ export default function StartupIncubation() {
 
                 if (startupResponse.status === "success") {
                     setModalStatus(false);
+                    successToast("Incubation / Acceleration added successfully!");
                 } else {
-                    //
+                    errorToast(startupResponse.message || "Failed to add incubation / acceleration details");
                 }
             })
             .catch((error) => {
                 consoleLogger("STARTUPS ERROR: ", error);
-                //
+                errorToast(error?.response?.data?.message || "Failed to add incubation / acceleration details");
             })
             .finally(() => {
-                setModalStatus(false);
                 setLoader(false);
 
                 setOrgName("");

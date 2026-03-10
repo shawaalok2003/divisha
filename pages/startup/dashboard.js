@@ -68,26 +68,24 @@ export default function StartupDashboard() {
 
                 <div className="col-lg-6">
                     <div className="bg-white p-5">
-                        {startup.subscription && (
+                        <h5 className="text-dark">
+                            You can check out your premium page{" "}
+                            <Link href={`${APPLICATION_URLS.STARTUP_LISTING.url}/${startup.startupId}`} className="text-info" target="_blank">
+                                here <span className="fas fa-external-link pl-1"></span>
+                            </Link>
+                        </h5>
+
+                        {startup.subscription ? (
                             <>
-                                <h5 className="text-dark">
-                                    You can check out your premium page{" "}
-                                    <Link href={`${APPLICATION_URLS.STARTUP_LISTING.url}/${startup.startupId}`} className="text-info" target="_blank">
-                                        here <span className="fas fa-external-link pl-1"></span>
-                                    </Link>
-                                </h5>
                                 <h6 className="text-gray">
                                     Your subscription is expiring on:{" "}
-                                    {CONFIG.STARTUP_SUBSCRIPTION_MODE === "onetime" ? getFormattedDateOnly(startup.subscription.endDate) : "NA"}
+                                    {CONFIG.STARTUP_SUBSCRIPTION_MODE === "onetime"
+                                        ? getFormattedDateOnly(startup.subscription.endDate)
+                                        : "Auto-renew enabled"}
                                 </h6>
                             </>
-                        )}
-
-                        {!startup.subscription && (
+                        ) : (
                             <>
-                                <h5 className="text-dark">
-                                    You can check out your premium page: <span className="text-gray">N/A</span>
-                                </h5>
                                 <h6 className="text-primary">
                                     Your need an active subscription to access your premium page{" "}
                                     <Link href={`${APPLICATION_URLS.STARTUP_SUBSCRIPTION.url}`} className="text-info">

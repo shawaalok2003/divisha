@@ -12,9 +12,10 @@ import useStartup from "../../../hooks/useStartup";
 import COMMON_API from "../../../api/common";
 import UPLOAD_API from "../../../api/upload";
 import { consoleLogger } from "../../../helpers";
+import { getStartupSession } from "../../../helpers/session";
 
 export default function StartupBusinessInfo() {
-    const { startup } = useStartup();
+    const { startup, setStartupDetails } = useStartup();
 
     const countriesData = [
         {
@@ -261,24 +262,37 @@ export default function StartupBusinessInfo() {
     const handleStartupLogoUpload = useCallback(async (files) => {
         setLogoLoader(true);
 
-        if (!files || (files && files.length === 0)) return;
-
-        const { data: uploadedFile } = await UPLOAD_API.uploadFileToAWS({ token: startup.token, file: files[0], type: "startuplogo" });
-
-        if (uploadedFile.status === "success") {
-            setSignedLogo(uploadedFile.data.signedUrl);
-
-            setLogo(uploadedFile.data.Key);
+        if (!files || (files && files.length === 0)) {
             setLogoLoader(false);
-            setLogoModal(false);
-
-            await STARTUP_API.updateStartup({ token: startup.token, updateFields: { logo: uploadedFile.data.Key } });
-        } else {
-            setLogoLoader(false);
-            setLogoModal(false);
-            consoleLogger("error", err);
+            return;
         }
-    }, []);
+
+        const startupToken = startup?.token || getStartupSession();
+
+        try {
+            const { data: uploadedFile } = await UPLOAD_API.uploadFileToAWS({ token: startupToken, file: files[0], type: "startuplogo" });
+
+            if (uploadedFile.status === "success") {
+                setSignedLogo(uploadedFile.data.signedUrl);
+
+                setLogo(uploadedFile.data.Key);
+                setLogoModal(false);
+
+                await STARTUP_API.updateStartup({ token: startupToken, updateFields: { logo: uploadedFile.data.Key } });
+                setStartupDetails({ logo: uploadedFile.data.signedUrl });
+                return;
+            }
+
+            consoleLogger("STARTUP LOGO UPLOAD ERROR:", uploadedFile?.message || "Upload failed");
+            window.alert(uploadedFile?.message || "Failed to upload logo");
+        } catch (error) {
+            const errorMessage = error?.response?.data?.message || error?.message || "Failed to upload logo";
+            consoleLogger("STARTUP LOGO UPLOAD ERROR:", error);
+            window.alert(errorMessage);
+        } finally {
+            setLogoLoader(false);
+        }
+    }, [startup?.token, setStartupDetails]);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ maxFiles: 1, onDrop: handleStartupLogoUpload });
 

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { RecoilRoot } from "recoil";
 import { ToastContainer } from "react-toastify";
 
@@ -21,10 +22,16 @@ const ToastProvider = ({ children }) => {
 };
 
 export default function App({ Component, pageProps }) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     return (
         <RecoilRoot>
             <ToastProvider>
-                <Component {...pageProps} />
+                {mounted ? <Component {...pageProps} /> : null}
             </ToastProvider>
         </RecoilRoot>
     );
